@@ -1,5 +1,6 @@
 .root {
-    -fx-background-color: bisque;
+    -fx-background-image: url("field.jpg");
+
 }
 
 Button {
