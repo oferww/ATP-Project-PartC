@@ -10,10 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
@@ -25,6 +22,7 @@ import javafx.stage.StageStyle;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class MyViewController implements Initializable {
@@ -148,6 +146,24 @@ public class MyViewController implements Initializable {
         Scene scene1= new Scene(layout, 400, 400);
         popupwindow.setScene(scene1);
         popupwindow.show();
+
+    }
+
+
+    public void Exit() {
+        Stage popupwindow=new Stage();
+
+        popupwindow.initModality(Modality.APPLICATION_MODAL);
+        popupwindow.setTitle("do you want to quit? :(");
+        Label label1= new Label("Do you really want to exit? :(");
+        Button button1= new Button("I quit :((((");
+        button1.setOnAction(e -> System.exit(0));
+        VBox layout= new VBox(10);
+        layout.getChildren().addAll(label1, button1);
+        layout.setAlignment(Pos.CENTER);
+        Scene scene1= new Scene(layout, 400, 400);
+        popupwindow.setScene(scene1);
+        popupwindow.showAndWait();
 
     }
 }
