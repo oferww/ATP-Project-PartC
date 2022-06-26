@@ -33,11 +33,11 @@ public class Main extends Application {
         primaryStage.setTitle("El Laberinto de Leo");
         primaryStage.getIcons().add(new Image("leo.png"));
         primaryStage.setScene(new Scene(root, 1000, 800));
-        String musicFile = "resources/UCL.mp3";
-        Media media = new Media(new File(musicFile).toURI().toString()); //replace /Movies/test.mp3 with your file
-        MediaPlayer player = new MediaPlayer(media);
-        player.setAutoPlay(true);
-        player.play();
+//        String musicFile = "resources/UCL.mp3";
+//        Media media = new Media(new File(musicFile).toURI().toString()); //replace /Movies/test.mp3 with your file
+//        MediaPlayer player = new MediaPlayer(media);
+//        player.setAutoPlay(true);
+//        player.play();
 
 
 

@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -21,10 +22,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.stage.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +49,9 @@ public class MyViewController implements Observer, IView, Initializable {
     StringProperty update_player_position_col = new SimpleStringProperty();
     private int [][] maze;
     private Maze mazefull;
-
+    String musicFile = "resources/UCL.mp3";
+    Media media = new Media(new File(musicFile).toURI().toString()); //replace /Movies/test.mp3 with your file
+    MediaPlayer player = new MediaPlayer(media);
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -80,6 +80,7 @@ public class MyViewController implements Observer, IView, Initializable {
     }
     public void generateMaze()
     {
+        player.play();
         int rows = Integer.valueOf(textField_mazeRows.getText());
         int cols = Integer.valueOf(textField_mazeColumns.getText());
         viewModel.generateMaze(rows,cols);
@@ -166,9 +167,11 @@ public class MyViewController implements Observer, IView, Initializable {
 
                     if (rowend == rowFromViewModel && colend == colFromViewModel)
                     {
+
                         set_update_player_position_row(rowFromViewModel + "");
                         set_update_player_position_col(colFromViewModel + "");
                         this.mazeDisplayer.set_player_position(rowFromViewModel,colFromViewModel);
+
                         String video = "resources/gol.mp4";
                         Media media = new Media(new File(video).toURI().toString()); //replace /Movies/test.mp3 with your file
                         MediaPlayer player = new MediaPlayer(media);
@@ -182,7 +185,10 @@ public class MyViewController implements Observer, IView, Initializable {
                         stage.setScene(scene);
                         stage.setTitle("D10S");
                         stage.getIcons().add(new Image("leo.png"));
+//                        SetStageCloseEvent(stage);
                         stage.show();
+
+
                     }
 
                     else//Update location
@@ -203,7 +209,27 @@ public class MyViewController implements Observer, IView, Initializable {
             }
         }
     }
+    private void SetStageCloseEvent(Stage primaryStage ) {
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+               public void handle(WindowEvent windowEvent) {
+                   String foto = "resources/funny.mp4";
+                   Media media1 = new Media(new File(foto).toURI().toString()); //replace /Movies/test.mp3 with your file
+                   MediaPlayer player1 = new MediaPlayer(media1);
+                   player1.setAutoPlay(true);
+                   Stage stage1 = new Stage();
+                   MediaView mediaView1 = new MediaView(player);
 
+                   Group root1 = new Group();
+                   root1.getChildren().add(mediaView1);
+                   Scene scene1 = new Scene(root1,800,800);
+                   stage1.setScene(scene1);
+                   stage1.setTitle("D10S");
+                   stage1.getIcons().add(new Image("leo.png"));
+                   stage1.show();
+               }
+           }
+        );
+    }
     public void drawMaze()
     {
         mazeDisplayer.drawMaze(mazefull);
