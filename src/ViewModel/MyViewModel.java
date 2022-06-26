@@ -31,6 +31,7 @@ public class MyViewModel extends Observable implements Observer {
         return mazefull;
     }
 
+
     public int getRowChar() {
         return rowChar;
     }
@@ -85,6 +86,7 @@ public class MyViewModel extends Observable implements Observer {
 
     public void moveCharacter(KeyEvent keyEvent)
     {
+
         int direction = -1;
 
         switch (keyEvent.getCode()){

@@ -28,7 +28,8 @@ public class Main extends Application {
 //
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("MyView.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MyView.fxml"));
+        Parent root = fxmlLoader.load();
         primaryStage.setTitle("El Laberinto de Leo");
         primaryStage.getIcons().add(new Image("leo.png"));
         primaryStage.setScene(new Scene(root, 1000, 800));
@@ -37,12 +38,12 @@ public class Main extends Application {
         MediaPlayer player = new MediaPlayer(media);
         player.play();
 
-//        FXMLLoader fxmlLoader = new FXMLLoader();
-//        IModel model = new MyModel();
-//        MyViewModel viewModel = new MyViewModel(model);
-//        MyViewController controller = fxmlLoader.getController();
-//        controller.setViewModel(viewModel);
-//        viewModel.addObserver(controller);
+
+        IModel model = new MyModel();
+        MyViewModel viewModel = new MyViewModel(model);
+        MyViewController controller = fxmlLoader.getController();
+        controller.setViewModel(viewModel);
+        viewModel.addObserver(controller);
 
         primaryStage.show();
 
