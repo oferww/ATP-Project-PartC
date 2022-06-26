@@ -19,7 +19,7 @@ public class MyViewModel extends Observable implements Observer {
     public MyViewModel(IModel model) {
         this.model = model;
         this.model.assignObserver(this);
-//        this.maze = null;
+        this.maze = null;
         this.mazefull = null;
     }
 
@@ -39,6 +39,16 @@ public class MyViewModel extends Observable implements Observer {
 
     public int getColChar() {
         return colChar;
+    }
+
+    public boolean getillegal()
+    {
+        return model.isIllegal();
+    }
+
+    public void setillegal()
+    {
+        model.setIllegalfalse();
     }
 
     @Override
@@ -74,6 +84,7 @@ public class MyViewModel extends Observable implements Observer {
                 {
                     this.maze = maze;
                     this.mazefull = mazefull;
+
                 }
             }
 

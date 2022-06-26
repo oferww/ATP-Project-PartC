@@ -21,6 +21,7 @@ public class MyModel extends Observable implements IModel{
     private Maze mazefull;
     private int rowChar;
     private int colChar;
+    boolean illegal = false;
     Server mazeGeneratingServer = new Server(5400, 1000, new ServerStrategyGenerateMaze());
     Server solveSearchProblemServer = new Server(5401, 1000, new ServerStrategySolveSearchProblem());
 
@@ -29,6 +30,14 @@ public class MyModel extends Observable implements IModel{
         rowChar =0;
         colChar =0;
         mazeGeneratingServer.start();
+    }
+
+    public boolean isIllegal() {
+        return illegal;
+    }
+
+    public void setIllegalfalse() {
+        this.illegal = false;
     }
 
     public void updateCharacterLocation(int direction)
@@ -91,7 +100,9 @@ public class MyModel extends Observable implements IModel{
                     rowChar--;
                 }
                 break;
-
+            default:
+                illegal = true;
+                break;
         }
 
         setChanged();

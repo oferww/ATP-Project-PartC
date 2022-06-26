@@ -36,7 +36,10 @@ public class Main extends Application {
         String musicFile = "resources/UCL.mp3";
         Media media = new Media(new File(musicFile).toURI().toString()); //replace /Movies/test.mp3 with your file
         MediaPlayer player = new MediaPlayer(media);
+        player.setAutoPlay(true);
         player.play();
+
+
 
 
         IModel model = new MyModel();
@@ -45,11 +48,20 @@ public class Main extends Application {
         controller.setViewModel(viewModel);
         viewModel.addObserver(controller);
 
+        SetStageCloseEvent(primaryStage);
         primaryStage.show();
-
 
     }
 
+    private void SetStageCloseEvent(Stage primaryStage ) {
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            public void handle(WindowEvent windowEvent) {
+                    Platform.exit();
+                    System.exit(0);
+                }
+            }
+        );
+    }
     public static void main(String[] args) {
         launch(args);
     }

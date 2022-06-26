@@ -10,12 +10,17 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -97,9 +102,17 @@ public class MyViewController implements Observer, IView, Initializable {
 
     public void showAlert(String message)
     {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setContentText(message);;
-        alert.show();
+        Stage popupwindow=new Stage();
+        popupwindow.initModality(Modality.APPLICATION_MODAL);
+        Button button1= new Button("OK");
+        button1.setOnAction(e -> System.exit(0));
+        Label label1= new Label(message);
+        VBox layout= new VBox(10);
+        layout.getChildren().addAll(label1, button1);
+        layout.setAlignment(Pos.CENTER);
+        Scene scene1= new Scene(layout, 400, 100);
+        popupwindow.setScene(scene1);
+        popupwindow.show();
     }
 
     public void keyPressed(KeyEvent keyEvent) {
@@ -131,12 +144,47 @@ public class MyViewController implements Observer, IView, Initializable {
                     int colChar = mazeDisplayer.getCol_player();
                     int rowFromViewModel = viewModel.getRowChar();
                     int colFromViewModel = viewModel.getColChar();
+                    int rowend = mazefull.getGoalPosition().getRowIndex();
+                    int colend = mazefull.getGoalPosition().getColumnIndex();
 
-                    if(rowFromViewModel == rowChar && colFromViewModel == colChar)//Solve Maze
-                    {
-                        viewModel.getSolution();
-                        showAlert("Solving Maze ... ");
+                    boolean illegal = viewModel.getillegal();
+
+                    if (illegal){
+                        viewModel.setillegal();
+                        set_update_player_position_row(rowFromViewModel + "");
+                        set_update_player_position_col(colFromViewModel + "");
+                        this.mazeDisplayer.set_player_position(rowFromViewModel,colFromViewModel);
                     }
+//
+//                    if (rowend == rowFromViewModel - 1 || colend == colFromViewModel - 1 || rowend == rowFromViewModel  +1 || colend == colFromViewModel + 1)
+//                    {
+//                        String musicFile = "resources/casigol.mp3";
+//                        Media media = new Media(new File(musicFile).toURI().toString()); //replace /Movies/test.mp3 with your file
+//                        MediaPlayer player = new MediaPlayer(media);
+//                        player.play();
+//                    }
+
+                    if (rowend == rowFromViewModel && colend == colFromViewModel)
+                    {
+                        set_update_player_position_row(rowFromViewModel + "");
+                        set_update_player_position_col(colFromViewModel + "");
+                        this.mazeDisplayer.set_player_position(rowFromViewModel,colFromViewModel);
+                        String video = "resources/gol.mp4";
+                        Media media = new Media(new File(video).toURI().toString()); //replace /Movies/test.mp3 with your file
+                        MediaPlayer player = new MediaPlayer(media);
+                        player.setAutoPlay(true);
+                        Stage stage = new Stage();
+                        MediaView mediaView = new MediaView(player);
+
+                        Group root = new Group();
+                        root.getChildren().add(mediaView);
+                        Scene scene = new Scene(root,1800,1000);
+                        stage.setScene(scene);
+                        stage.setTitle("D10S");
+                        stage.getIcons().add(new Image("leo.png"));
+                        stage.show();
+                    }
+
                     else//Update location
                     {
                         set_update_player_position_row(rowFromViewModel + "");
@@ -149,6 +197,7 @@ public class MyViewController implements Observer, IView, Initializable {
                 else//GenerateMaze
                 {
                     this.maze = maze;
+                    this.mazefull = viewModel.getMazeFull();
                     drawMaze();
                 }
             }
