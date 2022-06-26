@@ -44,27 +44,52 @@ public class MyModel extends Observable implements IModel{
         {
             case 1:
             case 18://Up
-                //if(rowChar!=0)
-                rowChar--;
+                if(rowChar!=0 && maze[rowChar-1][colChar] != 1) {
+                    rowChar--;
+                }
                 break;
 
             case 2:
             case 12://Down
-                //  if(rowChar!=maze.length-1)
-                rowChar++;
+                if(rowChar!=maze.length-1 && maze[rowChar+1][colChar] != 1) {
+                    rowChar++;
+                }
                 break;
             case 3://Left
-            case 14:    //  if(colChar!=0)
-                colChar--;
-                break;
+            case 14:    //
+                 if(colChar!=0 && maze[rowChar][colChar-1] != 1) {
+                     colChar--;
+                 }
+                 break;
             case 4:
             case 16://Right
-                //  if(colChar!=maze[0].length-1)
-                colChar++;
+                if(colChar!=maze[0].length-1 && maze[rowChar][colChar+1] != 1) {
+                    colChar++;
+                }
                 break;
             case 11:
-                colChar--;
-                rowChar--;
+                if (colChar!=0 && rowChar!=maze.length-1 && maze[rowChar+1][colChar-1] != 1) {
+                    colChar--;
+                    rowChar++;
+                }
+                break;
+            case 13:
+                if (colChar!=maze[0].length-1 && rowChar!=maze.length-1 && maze[rowChar+1][colChar+1] != 1) {
+                    colChar++;
+                    rowChar++;
+                }
+                break;
+            case 17:
+                if (colChar!=0 && rowChar!=0 && maze[rowChar-1][colChar-1] != 1) {
+                    colChar--;
+                    rowChar--;
+                }
+                break;
+            case 19:
+                if (colChar!=maze[0].length-1 && rowChar!=0 && maze[rowChar-1][colChar+1] != 1) {
+                    colChar++;
+                    rowChar--;
+                }
                 break;
 
         }
