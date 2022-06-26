@@ -78,8 +78,6 @@ public class MyViewController implements Observer, IView, Initializable {
         int rows = Integer.valueOf(textField_mazeRows.getText());
         int cols = Integer.valueOf(textField_mazeColumns.getText());
         viewModel.generateMaze(rows,cols);
-
-
     }
 
     public void solveMaze()
@@ -121,6 +119,7 @@ public class MyViewController implements Observer, IView, Initializable {
             if(maze == null)//generateMaze
             {
                 this.maze = viewModel.getMaze();
+                this.mazefull = viewModel.getMazeFull();
                 drawMaze();
             }
             else {

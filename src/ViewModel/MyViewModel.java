@@ -19,7 +19,8 @@ public class MyViewModel extends Observable implements Observer {
     public MyViewModel(IModel model) {
         this.model = model;
         this.model.assignObserver(this);
-        this.maze = null;
+//        this.maze = null;
+        this.mazefull = null;
     }
 
 
@@ -47,9 +48,11 @@ public class MyViewModel extends Observable implements Observer {
             if(maze == null)//generateMaze
             {
                 this.maze = model.getMaze();
+                this.mazefull = model.getMazeFull();
             }
             else {
                 int[][] maze = model.getMaze();
+                Maze mazefull = model.getMazeFull();
 
                 if (maze == this.maze)//Not generateMaze
                 {
@@ -70,6 +73,7 @@ public class MyViewModel extends Observable implements Observer {
                 else//GenerateMaze
                 {
                     this.maze = maze;
+                    this.mazefull = mazefull;
                 }
             }
 

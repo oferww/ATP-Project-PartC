@@ -28,7 +28,7 @@ public class MyModel extends Observable implements IModel{
         maze = null;
         rowChar =0;
         colChar =0;
-
+        mazeGeneratingServer.start();
     }
 
     public void updateCharacterLocation(int direction)
@@ -134,5 +134,8 @@ public class MyModel extends Observable implements IModel{
 
     public int[][] getMaze() {
         return maze;
+    }
+    public Maze getMazeFull() {
+        return mazefull;
     }
 }

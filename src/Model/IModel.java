@@ -1,5 +1,7 @@
 package Model;
 
+import algorithms.mazeGenerators.Maze;
+
 import java.util.Observer;
 
 public interface IModel {
@@ -11,4 +13,5 @@ public interface IModel {
     public void assignObserver(Observer o);
     public void solveMaze(int [][] maze);
     public void getSolution();
+    public Maze getMazeFull();
 }
