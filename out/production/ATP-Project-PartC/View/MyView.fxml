@@ -53,20 +53,31 @@
                     <menus>
                         <Menu mnemonicParsing="false" text="File">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#openFile" text="Open" />
-                                <MenuItem mnemonicParsing="false" text="Close" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFile" text="New" />
+                                <MenuItem mnemonicParsing="false" text="Save" />
+                        <MenuItem mnemonicParsing="false" onAction="#openFile" text="Load" />
                             </items>
                         </Menu>
-                        <Menu mnemonicParsing="false" text="Edit">
+                        <Menu mnemonicParsing="false" text="Options">
                             <items>
-                                <MenuItem mnemonicParsing="false" text="Delete" />
+                                <MenuItem mnemonicParsing="false" text="Properties" />
                             </items>
                         </Menu>
-                        <Menu mnemonicParsing="false" text="Help">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="About" />
-                            </items>
-                        </Menu>
+                  <Menu mnemonicParsing="false" text="About">
+                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#About" text="About" />
+                     </items>
+                  </Menu>
+                  <Menu mnemonicParsing="false"  text="Help">
+                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#Help" text="Help" />
+                     </items>
+                  </Menu>
+                  <Menu mnemonicParsing="false" text="Delete">
+                     <items>
+                        <MenuItem mnemonicParsing="false" text="Delete" />
+                     </items>
+                  </Menu>
                     </menus>
                 </MenuBar>
             </children>
@@ -75,7 +86,7 @@
     <center>
         <Pane BorderPane.alignment="CENTER">
             <children>
-                <MazeDisplayer fx:id="mazeDisplayer" height="700.0" imageFileNamePlayer="./resources/dribble.png" imageFileNameWall="./resources/ramos.png" onKeyPressed="#keyPressed" width="700.0" />
+                <MazeDisplayer fx:id="mazeDisplayer" height="700.0" imageFileNamePlayer="./resources/dribble.png" imageFileNameWall="./resources/ramos.png" imageFileNamegoal="./resources/goal.png" onKeyPressed="#keyPressed" width="700.0" />
             </children>
             <padding>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
