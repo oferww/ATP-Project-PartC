@@ -29,7 +29,7 @@ import java.util.Observer;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class MyViewController implements Observer, IView {
+public class MyViewController implements Observer, IView, Initializable {
 
     private MyViewModel viewModel;
     @FXML
@@ -47,10 +47,15 @@ public class MyViewController implements Observer, IView {
     private int [][] maze;
     private Maze mazefull;
 
-    public void setViewModel(MyViewModel viewModel) {
-        this.viewModel = viewModel;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
         lbl_player_row.textProperty().bind(update_player_position_row);
         lbl_player_column.textProperty().bind(update_player_position_col);
+    }
+
+    public void setViewModel(MyViewModel viewModel) {
+        this.viewModel = viewModel;
     }
 
     public String get_update_player_position_row() {
