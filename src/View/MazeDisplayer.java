@@ -77,6 +77,16 @@ public class MazeDisplayer extends Canvas {
     StringProperty imageFileNamegoal = new SimpleStringProperty();
     StringProperty imageFileNameball = new SimpleStringProperty();
     StringProperty imageFileNametp = new SimpleStringProperty();
+    StringProperty imageFileNamecasillas = new SimpleStringProperty();
+
+
+    public String getImageFileNamecasillas() {
+        return imageFileNamecasillas.get();
+    }
+
+    public void setImageFileNamecasillas(String imageFileNamecasillas) {
+        this.imageFileNamecasillas.set(imageFileNamecasillas);
+    }
 
     public String getImageFileNametp() {
         return imageFileNametp.get();
@@ -167,15 +177,16 @@ public class MazeDisplayer extends Canvas {
             Image goalImage = null;
             Image ballImage = null;
             Image tpImage = null;
-
+            Image casillasImage = null;
             try {
                 wallImage = new Image(new FileInputStream(getImageFileNameWall()));
                 goalImage = new Image(new FileInputStream(getImageFileNamegoal()));
                 ballImage = new Image(new FileInputStream(getImageFileNameball()));
                 tpImage = new Image(new FileInputStream(getImageFileNametp()));
+                casillasImage = new Image(new FileInputStream(getImageFileNamecasillas()));
 
             } catch (FileNotFoundException e) {
-                System.out.println("There is no wall or goal or ball or tp file....");
+                System.out.println("There is no wall or goal or casillas or ball or tp file....");
             }
             for(int i=0;i<row;i++)
             {
@@ -191,6 +202,8 @@ public class MazeDisplayer extends Canvas {
                         }
                         else {
                             graphicsContext.drawImage(goalImage, w, h, cellWidth, cellHeight);
+                            graphicsContext.drawImage(casillasImage, w, h, cellWidth, cellHeight);
+
                         }
                     }
                     if(mazefull.getval(i,j) == 1) // Wall

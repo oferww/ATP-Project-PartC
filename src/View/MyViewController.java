@@ -1,7 +1,9 @@
 package View;
 
+import Server.ServerStrategySolveSearchProblem;
 import ViewModel.MyViewModel;
 import algorithms.mazeGenerators.Maze;
+import algorithms.search.Solution;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -16,17 +18,19 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.*;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Optional;
@@ -52,6 +56,9 @@ public class MyViewController implements Observer, IView, Initializable {
     String musicFile = "resources/UCL.mp3";
     Media media = new Media(new File(musicFile).toURI().toString()); //replace /Movies/test.mp3 with your file
     MediaPlayer player = new MediaPlayer(media);
+    String musicFile1 = "resources/casi goal.mp3";
+    Media media1 = new Media(new File(musicFile1).toURI().toString()); //replace /Movies/test.mp3 with your file
+    MediaPlayer player1 = new MediaPlayer(media1);
     boolean presssol = false;
     boolean pressgen = false;
     boolean started = false;
@@ -61,6 +68,8 @@ public class MyViewController implements Observer, IView, Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         lbl_player_row.textProperty().bind(update_player_position_row);
         lbl_player_column.textProperty().bind(update_player_position_col);
+
+
     }
 
     public void setViewModel(MyViewModel viewModel) {
@@ -95,6 +104,16 @@ public class MyViewController implements Observer, IView, Initializable {
 
     }
 
+    public void generatenewMaze(Stage p)
+    {
+        p.close();
+        int rows = Integer.valueOf(textField_mazeRows.getText());
+        int cols = Integer.valueOf(textField_mazeColumns.getText());
+        presssol =false;
+        viewModel.generatenewMaze(rows,cols);
+        viewModel.solveMaze(this.maze);
+    }
+
     public void solveMaze()
     {
         viewModel.solveMaze(this.maze);
@@ -102,45 +121,55 @@ public class MyViewController implements Observer, IView, Initializable {
 
     public void presssolveMaze()
     {
+        if (started) {
             presssol = !presssol;
             viewModel.solveMaze(this.maze);
-
+        }
     }
 
-
-    public void openFile(ActionEvent actionEvent) {
-        FileChooser fc = new FileChooser();
-        fc.setTitle("Open maze");
-        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Maze files (*.maze)", "*.maze"));
-        fc.setInitialDirectory(new File("./resources"));
-        File chosen = fc.showOpenDialog(null);
-        //...
-    }
 
     public void showAlert(String message)
     {
         Stage popupwindow=new Stage();
         popupwindow.initModality(Modality.APPLICATION_MODAL);
-        Button button1= new Button("OK");
-        button1.setOnAction(e -> System.exit(0));
+        Button button0= new Button("I want to watch my goal again!");
+        button0.setOnAction(e -> playgoal());
+        Button button1= new Button("I want to score another goal!");
+        button1.setOnAction(e -> generatenewMaze(popupwindow));
+        Button button2= new Button("Thank you, I want to go rest now");
+        button2.setOnAction(e -> System.exit(0));
         Label label1= new Label(message);
         VBox layout= new VBox(10);
-        layout.getChildren().addAll(label1, button1);
+        layout.getChildren().addAll(label1,button0, button1, button2);
         layout.setAlignment(Pos.CENTER);
-        Scene scene1= new Scene(layout, 400, 100);
+        Scene scene1= new Scene(layout, 400, 200);
         popupwindow.setScene(scene1);
+        popupwindow.setTitle("YOU ARE THE CHAMPION");
+        popupwindow.getIcons().add(new Image("leo.png"));
         popupwindow.show();
     }
 
     public void keyPressed(KeyEvent keyEvent) {
-
+        if (started){
         viewModel.moveCharacter(keyEvent);
         keyEvent.consume();
-
+        }
     }
 
     public void mouseClicked(MouseEvent mouseEvent) {
         mazeDisplayer.requestFocus();
+//        double totalx = viewModel.getMazeFull().getRows();
+//        double totaly = viewModel.getMazeFull().getColumns();
+//        double posx = mouseEvent.getSceneX() ;
+//        double posy = mouseEvent.getSceneX();
+//        double lepposx = mazeDisplayer.getRow_player();
+//        double leoposy = mazeDisplayer.getCol_player();
+    }
+
+    public void mouseRealesed(MouseEvent mouseEvent) {
+        mazeDisplayer.requestFocus();
+        double posx = mouseEvent.getSceneX();
+        double posy = mouseEvent.getSceneX();
     }
 
     public void update(Observable o, Object arg) {
@@ -172,22 +201,20 @@ public class MyViewController implements Observer, IView, Initializable {
                         mazeDisplayer.setStarted(started);
                         mazeDisplayer.draw();
 
-
-
                     if (illegal){
                         viewModel.setillegal();
                         set_update_player_position_row(rowFromViewModel + "");
                         set_update_player_position_col(colFromViewModel + "");
                         this.mazeDisplayer.set_player_position(rowFromViewModel,colFromViewModel);
                     }
-//
-//                    if (rowend == rowFromViewModel - 1 || colend == colFromViewModel - 1 || rowend == rowFromViewModel  +1 || colend == colFromViewModel + 1)
-//                    {
-//                        String musicFile = "resources/casigol.mp3";
-//                        Media media = new Media(new File(musicFile).toURI().toString()); //replace /Movies/test.mp3 with your file
-//                        MediaPlayer player = new MediaPlayer(media);
-//                        player.play();
-//                    }
+
+                    int end = rowend + colend;
+                    int cur = rowChar + colChar;
+                    if (end == cur - 2 || end == cur + 2)
+                    {
+                        player1.play();
+                        player1 =new MediaPlayer(media1);
+                    }
 
                     if (rowend == rowFromViewModel && colend == colFromViewModel)
                     {
@@ -196,23 +223,7 @@ public class MyViewController implements Observer, IView, Initializable {
                         set_update_player_position_col(colFromViewModel + "");
                         this.mazeDisplayer.set_player_position(rowFromViewModel,colFromViewModel);
 
-                        String video = "resources/gol.mp4";
-                        Media media = new Media(new File(video).toURI().toString()); //replace /Movies/test.mp3 with your file
-                        MediaPlayer player = new MediaPlayer(media);
-                        player.setAutoPlay(true);
-                        Stage stage = new Stage();
-                        MediaView mediaView = new MediaView(player);
-
-                        Group root = new Group();
-                        root.getChildren().add(mediaView);
-                        Scene scene = new Scene(root,1800,1000);
-                        stage.setScene(scene);
-                        stage.setTitle("D10S");
-                        stage.getIcons().add(new Image("leo.png"));
-//                        SetStageCloseEvent(stage);
-                        stage.show();
-
-
+                        playgoal();
                     }
 
                     else//Update location
@@ -234,27 +245,63 @@ public class MyViewController implements Observer, IView, Initializable {
         }
     }
 
-    private void SetStageCloseEvent(Stage primaryStage ) {
+    private void playgoal()
+    {
+        String video = "resources/gol.mp4";
+        Media media = new Media(new File(video).toURI().toString()); //replace /Movies/test.mp3 with your file
+        MediaPlayer player = new MediaPlayer(media);
+        player.setAutoPlay(true);
+        Stage stage = new Stage();
+        MediaView mediaView = new MediaView(player);
+
+        Group root = new Group();
+        root.getChildren().add(mediaView);
+        Scene scene = new Scene(root,1800,1000);
+        stage.setScene(scene);
+        stage.setTitle("D10S");
+        stage.getIcons().add(new Image("leo.png"));
+        SetStage1CloseEvent(stage, player);
+        stage.show();
+    }
+
+    private void SetStage1CloseEvent(Stage primaryStage,MediaPlayer player ) {
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                public void handle(WindowEvent windowEvent) {
-                   String foto = "resources/funny.mp4";
-                   Media media1 = new Media(new File(foto).toURI().toString()); //replace /Movies/test.mp3 with your file
-                   MediaPlayer player1 = new MediaPlayer(media1);
-                   player1.setAutoPlay(true);
-                   Stage stage1 = new Stage();
-                   MediaView mediaView1 = new MediaView(player);
 
-                   Group root1 = new Group();
-                   root1.getChildren().add(mediaView1);
-                   Scene scene1 = new Scene(root1,800,800);
-                   stage1.setScene(scene1);
-                   stage1.setTitle("D10S");
-                   stage1.getIcons().add(new Image("leo.png"));
-                   stage1.show();
+                    player.stop();
+                   String video = "resources/funny.mp4";
+                   Media media = new Media(new File(video).toURI().toString()); //replace /Movies/test.mp3 with your file
+                   MediaPlayer player = new MediaPlayer(media);
+                   player.setAutoPlay(true);
+                   Stage stage = new Stage();
+                   MediaView mediaView = new MediaView(player);
+
+                   Group root = new Group();
+                   root.getChildren().add(mediaView);
+                   Scene scene = new Scene(root,550,350);
+                   stage.setScene(scene);
+                   stage.setTitle("D10S");
+                   stage.getIcons().add(new Image("leo.png"));
+                   SetStage2CloseEvent(stage, player);
+                   stage.show();
+
+
                }
            }
         );
     }
+
+    private void SetStage2CloseEvent(Stage primaryStage,MediaPlayer player ) {
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            public void handle(WindowEvent windowEvent) {
+
+                player.stop();
+                showAlert("You win!!! Amazing goal!!!");
+       }
+   }
+        );
+    }
+
     public void drawMaze()
     {
         mazeDisplayer.drawMaze(mazefull);
@@ -306,4 +353,63 @@ public class MyViewController implements Observer, IView, Initializable {
         popupwindow.showAndWait();
 
     }
+
+    public void load() throws IOException, ClassNotFoundException {
+        Stage stage=new Stage();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        File selectedFile = fileChooser.showOpenDialog(stage);
+        if (selectedFile != null) {
+            FileInputStream fi = new FileInputStream(new File(selectedFile.getAbsolutePath()));
+            ObjectInputStream oi = new ObjectInputStream(fi);
+
+            presssol = false;
+            mazefull = (Maze) oi.readObject();
+            maze = mazefull.getmap();
+            viewModel.setMazefull(mazefull);
+            viewModel.setMaze(maze);
+            viewModel.solveMaze(this.maze);
+            drawMaze();
+
+            oi.close();
+            fi.close();
+        }
+    }
+
+    public void save() throws IOException, ClassNotFoundException {
+        if (started) {
+            Stage stage = new Stage();
+            String mazestr = null;
+
+            try {
+                mazestr = mazefull.getStartPosition() + "" + mazefull.getGoalPosition() + ServerStrategySolveSearchProblem.toHexString(ServerStrategySolveSearchProblem.getSHA(mazefull.toString()));
+            } catch (NoSuchAlgorithmException var17) {
+                var17.printStackTrace();
+            }
+
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            directoryChooser.setTitle("Choose directory");
+
+            File selectedDirectory = directoryChooser.showDialog(stage);
+            if (selectedDirectory != null) {
+                File filepath = new File(selectedDirectory.getAbsolutePath(), mazestr + ".txt");
+
+                try (FileOutputStream fos = new FileOutputStream(filepath);
+                     ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+
+                    oos.writeObject(mazefull);
+                    oos.flush();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+    public void properties() {
+
+
+    }
+
 }

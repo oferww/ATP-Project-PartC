@@ -27,4 +27,12 @@ public interface IModel {
     public void setIllegalfalse();
 
     public boolean isIllegal();
+
+    public void generatenewRandomMaze(int row, int col);
+
+    public void setMazefull(Maze mazefull) ;
+
+
+
+    public void setMaze(int[][] maze) ;
 }

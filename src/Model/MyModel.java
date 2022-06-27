@@ -25,10 +25,14 @@ public class MyModel extends Observable implements IModel{
     private Maze mazefull;
     private int rowChar;
     private int colChar;
+
+
+
     boolean illegal = false;
     Server mazeGeneratingServer = new Server(5400, 1000, new ServerStrategyGenerateMaze());
     Server solveSearchProblemServer = new Server(5401, 1000, new ServerStrategySolveSearchProblem());
     Solution sol;
+
 
 
     public MyModel() {
@@ -38,7 +42,13 @@ public class MyModel extends Observable implements IModel{
         mazeGeneratingServer.start();
         solveSearchProblemServer.start();
     }
+    public void setMaze(int[][] maze) {
+        this.maze = maze;
+    }
 
+    public void setMazefull(Maze mazefull) {
+        this.mazefull = mazefull;
+    }
     public boolean isIllegal() {
         return illegal;
     }
@@ -145,8 +155,6 @@ public class MyModel extends Observable implements IModel{
                         sol = (Solution)fromServer.readObject();
                         System.out.println(String.format("Solution steps: %s", sol));
 
-
-
                     } catch (Exception var10) {
                         var10.printStackTrace();
                     }
@@ -157,8 +165,6 @@ public class MyModel extends Observable implements IModel{
         } catch (UnknownHostException var1) {
             var1.printStackTrace();
         }
-
-
 
         setChanged();
         notifyObservers();
@@ -172,6 +178,41 @@ public class MyModel extends Observable implements IModel{
 
     public void generateRandomMaze(int row, int col)
     {
+        try {
+            Client client = new Client(InetAddress.getLocalHost(), 5400, new IClientStrategy() {
+                public void clientStrategy(InputStream inFromServer, OutputStream outToServer) {
+                    try {
+                        ObjectOutputStream toServer = new ObjectOutputStream(outToServer);
+                        ObjectInputStream fromServer = new ObjectInputStream(inFromServer);
+                        toServer.flush();
+                        int[] mazeDimensions = new int[]{row, col};
+                        toServer.writeObject(mazeDimensions);
+                        toServer.flush();
+                        byte[] compressedMaze = (byte[])fromServer.readObject();
+                        InputStream is = new MyDecompressorInputStream(new ByteArrayInputStream(compressedMaze));
+                        byte[] decompressedMaze = new byte[(row * col ) + 25];
+                        is.read(decompressedMaze);
+                        mazefull = new Maze(decompressedMaze);
+                        maze = mazefull.getmap();
+                    } catch (Exception var10) {
+                        var10.printStackTrace();
+                    }
+
+                }
+            });
+            client.communicateWithServer();
+        } catch (UnknownHostException var1) {
+            var1.printStackTrace();
+        }
+
+        setChanged();
+        notifyObservers();
+    }
+
+    public void generatenewRandomMaze(int row, int col)
+    {
+        rowChar=0;
+        colChar=0;
         try {
             Client client = new Client(InetAddress.getLocalHost(), 5400, new IClientStrategy() {
                 public void clientStrategy(InputStream inFromServer, OutputStream outToServer) {

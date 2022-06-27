@@ -24,6 +24,15 @@ public class MyViewModel extends Observable implements Observer {
         this.mazefull = null;
     }
 
+    public void setMaze(int[][] maze) {
+        this.maze = maze;
+        model.setMaze(maze);
+    }
+
+    public void setMazefull(Maze mazefull) {
+        this.mazefull = mazefull;
+        model.setMazefull(mazefull);
+    }
 
     public int[][] getMaze() {
         return maze;
@@ -98,6 +107,11 @@ public class MyViewModel extends Observable implements Observer {
     public void generateMaze(int row,int col)
     {
         this.model.generateRandomMaze(row,col);
+    }
+
+    public void generatenewMaze(int row,int col)
+    {
+        this.model.generatenewRandomMaze(row,col);
     }
 
     public void moveCharacter(KeyEvent keyEvent)
