@@ -2,6 +2,7 @@ package ViewModel;
 
 import Model.IModel;
 import algorithms.mazeGenerators.Maze;
+import algorithms.search.Solution;
 import javafx.scene.input.KeyEvent;
 
 import java.util.Observable;
@@ -152,8 +153,8 @@ public class MyViewModel extends Observable implements Observer {
         model.solveMaze(maze);
     }
 
-    public void getSolution()
+    public Solution getSolution()
     {
-        model.getSolution();
+        return model.getSolution();
     }
 }

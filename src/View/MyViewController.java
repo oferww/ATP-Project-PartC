@@ -52,6 +52,10 @@ public class MyViewController implements Observer, IView, Initializable {
     String musicFile = "resources/UCL.mp3";
     Media media = new Media(new File(musicFile).toURI().toString()); //replace /Movies/test.mp3 with your file
     MediaPlayer player = new MediaPlayer(media);
+    boolean presssol = false;
+    boolean pressgen = false;
+    boolean started = false;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -80,17 +84,29 @@ public class MyViewController implements Observer, IView, Initializable {
     }
     public void generateMaze()
     {
+        pressgen = !pressgen;
+        presssol =false;
         player.play();
         int rows = Integer.valueOf(textField_mazeRows.getText());
         int cols = Integer.valueOf(textField_mazeColumns.getText());
         viewModel.generateMaze(rows,cols);
+        viewModel.solveMaze(this.maze);
+        started = true;
+
     }
 
     public void solveMaze()
     {
         viewModel.solveMaze(this.maze);
+    }
+
+    public void presssolveMaze()
+    {
+            presssol = !presssol;
+            viewModel.solveMaze(this.maze);
 
     }
+
 
     public void openFile(ActionEvent actionEvent) {
         FileChooser fc = new FileChooser();
@@ -149,6 +165,14 @@ public class MyViewController implements Observer, IView, Initializable {
                     int colend = mazefull.getGoalPosition().getColumnIndex();
 
                     boolean illegal = viewModel.getillegal();
+
+                        mazeDisplayer.setSol(viewModel.getSolution());
+                        mazeDisplayer.setPressgen(pressgen);
+                        mazeDisplayer.setPresssol(presssol);
+                        mazeDisplayer.setStarted(started);
+                        mazeDisplayer.draw();
+
+
 
                     if (illegal){
                         viewModel.setillegal();
@@ -209,6 +233,7 @@ public class MyViewController implements Observer, IView, Initializable {
             }
         }
     }
+
     private void SetStageCloseEvent(Stage primaryStage ) {
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                public void handle(WindowEvent windowEvent) {

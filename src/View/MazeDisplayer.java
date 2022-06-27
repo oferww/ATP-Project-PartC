@@ -2,6 +2,8 @@ package View;
 
 import algorithms.mazeGenerators.Maze;
 import algorithms.mazeGenerators.Position;
+import algorithms.search.AState;
+import algorithms.search.MazeState;
 import algorithms.search.Solution;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -13,6 +15,8 @@ import javafx.scene.paint.Color;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MazeDisplayer extends Canvas {
 
@@ -20,10 +24,75 @@ public class MazeDisplayer extends Canvas {
     private int[][] maze;
     private int row_player =0;
     private int col_player =0;
+    private ArrayList<ArrayList<Integer>> sol;
+    boolean presssol = false;
+    boolean started = false;
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void setStarted(boolean started) {
+        this.started = started;
+    }
+
+    public boolean isPressgen() {
+        return pressgen;
+    }
+
+    public void setPressgen(boolean pressgen) {
+        this.pressgen = pressgen;
+    }
+
+    boolean pressgen = false;
+
+
+    public boolean isPresssol() {
+        return presssol;
+    }
+
+    public void setPresssol(boolean presssol) {
+        this.presssol = presssol;
+    }
+
+
+    public void setSol(Solution sol) {
+        this.sol = new ArrayList<ArrayList<Integer>>();
+        int l = sol.getSolutionPath().size();
+        for (int i = 0 ; i < l ; i++)
+        {
+            this.sol.add(i, new ArrayList<Integer>());
+            ArrayList<Integer> curarray = this.sol.get(i);
+            curarray.add(0, (Integer) ((MazeState) sol.getSolutionPath().get(i)).getRow());
+            curarray.add(1, (Integer) ((MazeState) sol.getSolutionPath().get(i)).getCol());
+        }
+    }
+
+    public ArrayList<ArrayList<Integer>> getSol() {
+        return sol;
+    }
 
     StringProperty imageFileNameWall = new SimpleStringProperty();
     StringProperty imageFileNamePlayer = new SimpleStringProperty();
     StringProperty imageFileNamegoal = new SimpleStringProperty();
+    StringProperty imageFileNameball = new SimpleStringProperty();
+    StringProperty imageFileNametp = new SimpleStringProperty();
+
+    public String getImageFileNametp() {
+        return imageFileNametp.get();
+    }
+
+    public void setImageFileNametp(String imageFileNametp) {
+        this.imageFileNametp.set(imageFileNametp);
+    }
+
+    public String getImageFileNameball() {
+        return imageFileNameball.get();
+    }
+
+    public void setImageFileNameball(String imageFileNameball) {
+        this.imageFileNameball.set(imageFileNameball);
+    }
 
     public String getImageFileNameWall() {
         return imageFileNameWall.get();
@@ -82,6 +151,7 @@ public class MazeDisplayer extends Canvas {
     {
         if( maze!=null)
         {
+
             double canvasHeight = getHeight();
             double canvasWidth = getWidth();
             int row = mazefull.getRows();
@@ -95,11 +165,17 @@ public class MazeDisplayer extends Canvas {
             //Draw Maze
             Image wallImage = null;
             Image goalImage = null;
+            Image ballImage = null;
+            Image tpImage = null;
+
             try {
                 wallImage = new Image(new FileInputStream(getImageFileNameWall()));
                 goalImage = new Image(new FileInputStream(getImageFileNamegoal()));
+                ballImage = new Image(new FileInputStream(getImageFileNameball()));
+                tpImage = new Image(new FileInputStream(getImageFileNametp()));
+
             } catch (FileNotFoundException e) {
-                System.out.println("There is no wall or goal file....");
+                System.out.println("There is no wall or goal or ball or tp file....");
             }
             for(int i=0;i<row;i++)
             {
@@ -128,6 +204,36 @@ public class MazeDisplayer extends Canvas {
                             graphicsContext.drawImage(wallImage,w,h,cellWidth,cellHeight);
                         }
                     }
+                    if (presssol)
+                    {
+                        ArrayList<Integer> cur = new ArrayList<Integer>();
+                        cur.add(0,i);
+                        cur.add(1,j);
+                        if(sol.contains(cur))
+                        {
+                            h = i * cellHeight;
+                            w = j * cellWidth;
+                            if (ballImage == null){
+                                graphicsContext.fillRect(w,h,cellWidth,cellHeight);
+                            }
+                            else{
+                                graphicsContext.drawImage(ballImage,w,h,cellWidth,cellHeight);
+                            }
+                        }
+                    }
+
+                    else {
+                        if (started){
+                        ArrayList<Integer> cur = new ArrayList<Integer>();
+                        cur.add(0, i);
+                        cur.add(1, j);
+                        if (sol.contains(cur)) {
+                            h = i * cellHeight;
+                            w = j * cellWidth;
+                            graphicsContext.drawImage(tpImage, w, h, cellWidth, cellHeight);
+                        }
+                    }
+                    }
 
                 }
             }
@@ -144,4 +250,5 @@ public class MazeDisplayer extends Canvas {
 
         }
     }
+
 }
