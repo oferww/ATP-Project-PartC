@@ -78,7 +78,33 @@ public class MazeDisplayer extends Canvas {
     StringProperty imageFileNameball = new SimpleStringProperty();
     StringProperty imageFileNametp = new SimpleStringProperty();
     StringProperty imageFileNamecasillas = new SimpleStringProperty();
+    StringProperty imageFileNamemarcelo = new SimpleStringProperty();
+    StringProperty imageFileNamediarra = new SimpleStringProperty();
+    StringProperty imageFileNamealbiol = new SimpleStringProperty();
 
+    public String getImageFileNamealbiol() {
+        return imageFileNamealbiol.get();
+    }
+
+    public void setImageFileNamealbiol(String imageFileNamealbiol) {
+        this.imageFileNamealbiol.set(imageFileNamealbiol);
+    }
+
+    public String getImageFileNamediarra() {
+        return imageFileNamediarra.get();
+    }
+
+    public void setImageFileNamediarra(String imageFileNamediarra) {
+        this.imageFileNamediarra.set(imageFileNamediarra);
+    }
+
+    public String getImageFileNamemarcelo() {
+        return imageFileNamemarcelo.get();
+    }
+
+    public void setImageFileNamemarcelo(String imageFileNamemarcelo) {
+        this.imageFileNamemarcelo.set(imageFileNamemarcelo);
+    }
 
     public String getImageFileNamecasillas() {
         return imageFileNamecasillas.get();
@@ -161,7 +187,7 @@ public class MazeDisplayer extends Canvas {
     {
         if( maze!=null)
         {
-
+            int wallcount = 0;
             double canvasHeight = getHeight();
             double canvasWidth = getWidth();
             int row = mazefull.getRows();
@@ -178,15 +204,23 @@ public class MazeDisplayer extends Canvas {
             Image ballImage = null;
             Image tpImage = null;
             Image casillasImage = null;
+            Image marceloImage = null;
+            Image diarraImage = null;
+            Image albiolImage = null;
+
+
             try {
                 wallImage = new Image(new FileInputStream(getImageFileNameWall()));
                 goalImage = new Image(new FileInputStream(getImageFileNamegoal()));
                 ballImage = new Image(new FileInputStream(getImageFileNameball()));
                 tpImage = new Image(new FileInputStream(getImageFileNametp()));
                 casillasImage = new Image(new FileInputStream(getImageFileNamecasillas()));
+                marceloImage = new Image(new FileInputStream(getImageFileNamemarcelo()));
+                diarraImage = new Image(new FileInputStream(getImageFileNamediarra()));
+                albiolImage = new Image(new FileInputStream(getImageFileNamealbiol()));
 
             } catch (FileNotFoundException e) {
-                System.out.println("There is no wall or goal or casillas or ball or tp file....");
+                System.out.println("There is a file missing....");
             }
             for(int i=0;i<row;i++)
             {
@@ -210,12 +244,26 @@ public class MazeDisplayer extends Canvas {
                     {
                         h = i * cellHeight;
                         w = j * cellWidth;
-                        if (wallImage == null){
+                        if (wallImage == null ||  marceloImage== null || albiolImage == null || diarraImage== null ){
 
                             graphicsContext.fillRect(w,h,cellWidth,cellHeight);
                         }else{
-                            graphicsContext.drawImage(wallImage,w,h,cellWidth,cellHeight);
+                            if (wallcount % 4 == 0) {
+                                graphicsContext.drawImage(diarraImage, w, h, cellWidth, cellHeight);
+                            }
+                            else if (wallcount % 4 == 1){
+                                graphicsContext.drawImage(wallImage, w, h, cellWidth, cellHeight);
+                            }
+                            else if (wallcount % 4 == 2){
+                                graphicsContext.drawImage(albiolImage, w, h, cellWidth, cellHeight);
+                            }
+                            else
+                            {
+                                graphicsContext.drawImage(marceloImage, w, h, cellWidth, cellHeight);
+
+                            }
                         }
+                        wallcount++;
                     }
                     if (presssol)
                     {
@@ -230,6 +278,7 @@ public class MazeDisplayer extends Canvas {
                                 graphicsContext.fillRect(w,h,cellWidth,cellHeight);
                             }
                             else{
+
                                 graphicsContext.drawImage(ballImage,w,h,cellWidth,cellHeight);
                             }
                         }
