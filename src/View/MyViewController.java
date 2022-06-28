@@ -1,12 +1,18 @@
 package View;
 
+import Server.Configurations;
 import Server.ServerStrategySolveSearchProblem;
 import ViewModel.MyViewModel;
+import algorithms.mazeGenerators.EmptyMazeGenerator;
 import algorithms.mazeGenerators.Maze;
+import algorithms.mazeGenerators.SimpleMazeGenerator;
+import algorithms.search.BreadthFirstSearch;
+import algorithms.search.DepthFirstSearch;
 import algorithms.search.Solution;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -26,8 +32,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.stage.*;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
@@ -62,6 +72,9 @@ public class MyViewController implements Observer, IView, Initializable {
     boolean presssol = false;
     boolean pressgen = false;
     boolean started = false;
+    String algo = "";
+    String gen = "";
+    int threads = 1;
 
 
     @Override
@@ -106,6 +119,7 @@ public class MyViewController implements Observer, IView, Initializable {
 
     public void generatenewMaze(Stage p)
     {
+
         p.close();
         int rows = Integer.valueOf(textField_mazeRows.getText());
         int cols = Integer.valueOf(textField_mazeColumns.getText());
@@ -158,6 +172,7 @@ public class MyViewController implements Observer, IView, Initializable {
 
     public void mouseClicked(MouseEvent mouseEvent) {
         mazeDisplayer.requestFocus();
+
 //        double totalx = viewModel.getMazeFull().getRows();
 //        double totaly = viewModel.getMazeFull().getColumns();
 //        double posx = mouseEvent.getSceneX() ;
@@ -173,6 +188,7 @@ public class MyViewController implements Observer, IView, Initializable {
     }
 
     public void update(Observable o, Object arg) {
+
         if(o instanceof MyViewModel)
         {
             if(maze == null)//generateMaze
@@ -314,6 +330,8 @@ public class MyViewController implements Observer, IView, Initializable {
         popupwindow.setTitle("Help");
         Label label1= new Label("You need to try and get to the goal and score!! \n dont run into Sergio!");
         VBox layout= new VBox(10);
+        popupwindow.getIcons().add(new Image("leo.png"));
+
         layout.getChildren().addAll(label1);
         layout.setAlignment(Pos.CENTER);
         Scene scene1= new Scene(layout, 400, 400);
@@ -326,11 +344,13 @@ public class MyViewController implements Observer, IView, Initializable {
         Stage popupwindow=new Stage();
         popupwindow.initModality(Modality.APPLICATION_MODAL);
         popupwindow.setTitle("About");
-        Label label1= new Label("Maze Project created by Ofer and Erez");
+        checkproperties();
+        popupwindow.getIcons().add(new Image("leo.png"));
+        Label label1= new Label("Maze Project created by Ofer and Erez\n" + "The searcing alogrithm used is " + algo +"\nThe maze generator used is " + gen);
         VBox layout= new VBox(10);
         layout.getChildren().addAll(label1);
         layout.setAlignment(Pos.CENTER);
-        Scene scene1= new Scene(layout, 400, 400);
+        Scene scene1= new Scene(layout, 400, 200);
         popupwindow.setScene(scene1);
         popupwindow.show();
 
@@ -356,6 +376,7 @@ public class MyViewController implements Observer, IView, Initializable {
 
     public void load() throws IOException, ClassNotFoundException {
         Stage stage=new Stage();
+        stage.getIcons().add(new Image("leo.png"));
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         File selectedFile = fileChooser.showOpenDialog(stage);
@@ -380,6 +401,7 @@ public class MyViewController implements Observer, IView, Initializable {
         if (started) {
             Stage stage = new Stage();
             String mazestr = null;
+            stage.getIcons().add(new Image("leo.png"));
 
             try {
                 mazestr = mazefull.getStartPosition() + "" + mazefull.getGoalPosition() + ServerStrategySolveSearchProblem.toHexString(ServerStrategySolveSearchProblem.getSHA(mazefull.toString()));
@@ -408,8 +430,68 @@ public class MyViewController implements Observer, IView, Initializable {
     }
 
     public void properties() {
+        Group root = new Group();
+        double h = 200;
+        double w =200;
 
+        Stage popupwindow=new Stage();
+        popupwindow.initModality(Modality.APPLICATION_MODAL);
+        popupwindow.setTitle("Properties");
+        checkproperties();
+        popupwindow.getIcons().add(new Image("leo.png"));
+        Label label1= new Label("The searcing alogrithm used is " + algo +"\nThe maze generator used is " + gen +"\nThe number of threads used is " + threads);
+        label1.setTextFill(Color.RED);
+        VBox layout= new VBox(100);
+        layout.setAlignment(Pos.BOTTOM_CENTER);
+        layout.getChildren().addAll(label1);
+        popupwindow.setResizable(false);
+        try {
+            Image image1 = new Image(new FileInputStream("resources/1.png"));
+            ImageView iv1 = new ImageView();
+            iv1.setImage(image1);
+            root.getChildren().add(iv1);
+            h = image1.getHeight();
+            w = image1.getWidth();
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        root.getChildren().add(layout);
+        layout.setPrefHeight(h/8);
+        layout.setPrefWidth(1.6*w);
+        Scene scene1= new Scene(root, w, h);
+        popupwindow.setScene(scene1);
+
+        popupwindow.show();
+    }
+
+    public void checkproperties() {
+
+        try {
+            if (Configurations.getgenerator() instanceof EmptyMazeGenerator) {
+                gen = "EmptyMazeGenerator";
+            } else if (Configurations.getsearching() instanceof SimpleMazeGenerator) {
+                gen = "SimpleMazeGenerator";
+            } else {
+                gen = "MyMazeGenerator";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            if (Configurations.getsearching() instanceof DepthFirstSearch) {
+                algo = "DepthFirstSearch";
+            } else if (Configurations.getsearching() instanceof BreadthFirstSearch) {
+                algo = "BreadthFirstSearch";
+            } else {
+                algo = "BestFirstSearch";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        threads = Configurations.gethreads();
 
     }
+
 
 }
