@@ -65,12 +65,8 @@ public class MyViewController implements Observer, IView, Initializable {
     StringProperty update_player_position_col = new SimpleStringProperty();
     private int [][] maze;
     private Maze mazefull;
-    String musicFile = "resources/UCL.mp3";
-    Media media = new Media(new File(musicFile).toURI().toString()); //replace /Movies/test.mp3 with your file
-    MediaPlayer player = new MediaPlayer(media);
-    String musicFile1 = "resources/casi goal.mp3";
-    Media media1 = new Media(new File(musicFile1).toURI().toString()); //replace /Movies/test.mp3 with your file
-    MediaPlayer player1 = new MediaPlayer(media1);
+
+
     boolean presssol = false;
     boolean pressgen = false;
     boolean started = false;
@@ -108,14 +104,19 @@ public class MyViewController implements Observer, IView, Initializable {
     }
     public void generateMaze()
     {
+
         if (started)
         {
             generatenewMaze();
             return;
         }
+        String musicFile = "resources/UCL.mp3";
+        Media media = new Media(new File(musicFile).toURI().toString()); //replace /Movies/test.mp3 with your file
+        MediaPlayer player = new MediaPlayer(media);
+        player.play();
+
         pressgen = !pressgen;
         presssol =false;
-        player.play();
         int rows = Integer.valueOf(textField_mazeRows.getText());
         int cols = Integer.valueOf(textField_mazeColumns.getText());
         viewModel.generateMaze(rows,cols);
@@ -233,6 +234,9 @@ public class MyViewController implements Observer, IView, Initializable {
                     int cur = rowChar + colChar;
                     if (end == cur - 2 || end == cur + 2)
                     {
+                        String musicFile1 = "resources/casi goal.mp3";
+                        Media media1 = new Media(new File(musicFile1).toURI().toString()); //replace /Movies/test.mp3 with your file
+                        MediaPlayer player1 = new MediaPlayer(media1);
                         player1.play();
                         player1 =new MediaPlayer(media1);
                     }

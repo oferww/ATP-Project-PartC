@@ -6,7 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/../resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/../src" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="1.8.0_241" jdkType="JavaSDK" />
+    <orderEntry type="jdk" jdkName="18" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" exported="">
       <library>
@@ -17,5 +17,15 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Program Files (x86)/Oracle/JavaFX Scene Builder 2.0/runtime/jre/lib/ext/jfxrt.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="lib1" level="project" />
   </component>
 </module>
