@@ -6,6 +6,7 @@ import ViewModel.MyViewModel;
 import algorithms.mazeGenerators.EmptyMazeGenerator;
 import algorithms.mazeGenerators.Maze;
 import algorithms.mazeGenerators.SimpleMazeGenerator;
+import algorithms.search.BestFirstSearch;
 import algorithms.search.BreadthFirstSearch;
 import algorithms.search.DepthFirstSearch;
 import algorithms.search.Solution;
@@ -25,6 +26,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -106,6 +108,11 @@ public class MyViewController implements Observer, IView, Initializable {
     }
     public void generateMaze()
     {
+        if (started)
+        {
+            generatenewMaze();
+            return;
+        }
         pressgen = !pressgen;
         presssol =false;
         player.play();
@@ -117,10 +124,8 @@ public class MyViewController implements Observer, IView, Initializable {
 
     }
 
-    public void generatenewMaze(Stage p)
+    public void generatenewMaze()
     {
-
-        p.close();
         int rows = Integer.valueOf(textField_mazeRows.getText());
         int cols = Integer.valueOf(textField_mazeColumns.getText());
         presssol =false;
@@ -147,9 +152,9 @@ public class MyViewController implements Observer, IView, Initializable {
         Stage popupwindow=new Stage();
         popupwindow.initModality(Modality.APPLICATION_MODAL);
         Button button0= new Button("I want to watch my goal again!");
-        button0.setOnAction(e -> playgoal());
+        button0.setOnAction(e -> {playgoal();popupwindow.close();});
         Button button1= new Button("I want to score another goal!");
-        button1.setOnAction(e -> generatenewMaze(popupwindow));
+        button1.setOnAction(e -> {generatenewMaze();popupwindow.close();});
         Button button2= new Button("Thank you, I want to go rest now");
         button2.setOnAction(e -> System.exit(0));
         Label label1= new Label(message);
@@ -263,20 +268,28 @@ public class MyViewController implements Observer, IView, Initializable {
 
     private void playgoal()
     {
-        String video = "resources/gol.mp4";
-        Media media = new Media(new File(video).toURI().toString()); //replace /Movies/test.mp3 with your file
-        MediaPlayer player = new MediaPlayer(media);
-        player.setAutoPlay(true);
+        String video = "resources/gols.mp4";
+        Media gol = new Media(new File(video).toURI().toString()); //replace /Movies/test.mp3 with your file
+        MediaPlayer playerg = new MediaPlayer(gol);
+        playerg.setAutoPlay(true);
         Stage stage = new Stage();
-        MediaView mediaView = new MediaView(player);
+        MediaView mediaView = new MediaView(playerg);
+        playerg.setAutoPlay(true);
 
         Group root = new Group();
+
         root.getChildren().add(mediaView);
-        Scene scene = new Scene(root,1800,1000);
-        stage.setScene(scene);
         stage.setTitle("D10S");
         stage.getIcons().add(new Image("leo.png"));
-        SetStage1CloseEvent(stage, player);
+        SetStage1CloseEvent(stage, playerg);
+        playerg.setOnReady(() -> {
+            // Add Pane to scene
+            double w = 1500.0;
+            double h = w * 0.625;
+            Scene scene = new Scene(root, w, h);
+            stage.setScene(scene);
+            stage.setFullScreen(true);
+        });
         stage.show();
     }
 
@@ -294,7 +307,7 @@ public class MyViewController implements Observer, IView, Initializable {
 
                    Group root = new Group();
                    root.getChildren().add(mediaView);
-                   Scene scene = new Scene(root,550,350);
+                   Scene scene = new Scene(root,540,350);
                    stage.setScene(scene);
                    stage.setTitle("D10S");
                    stage.getIcons().add(new Image("leo.png"));
@@ -310,7 +323,6 @@ public class MyViewController implements Observer, IView, Initializable {
     private void SetStage2CloseEvent(Stage primaryStage,MediaPlayer player ) {
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent windowEvent) {
-
                 player.stop();
                 showAlert("You win!!! Amazing goal!!!");
        }
@@ -328,7 +340,7 @@ public class MyViewController implements Observer, IView, Initializable {
         Stage popupwindow=new Stage();
         popupwindow.initModality(Modality.APPLICATION_MODAL);
         popupwindow.setTitle("Help");
-        Label label1= new Label("You need to try and get to the goal and score!! \n dont run into Sergio!");
+        Label label1= new Label("It is the Champions League semi-final, the 87th minute\nYou need to try and get to the goal and score an amazing goal!!");
         VBox layout= new VBox(10);
         popupwindow.getIcons().add(new Image("leo.png"));
 
@@ -346,7 +358,7 @@ public class MyViewController implements Observer, IView, Initializable {
         popupwindow.setTitle("About");
         checkproperties();
         popupwindow.getIcons().add(new Image("leo.png"));
-        Label label1= new Label("Maze Project created by Ofer and Erez\n" + "The searcing alogrithm used is " + algo +"\nThe maze generator used is " + gen);
+        Label label1= new Label("Maze Project created by Ofer and Erez\n" + "The searcing alogrithm used is " + algo +"\nThe maze generator used is " + gen );
         VBox layout= new VBox(10);
         layout.getChildren().addAll(label1);
         layout.setAlignment(Pos.CENTER);
@@ -481,10 +493,10 @@ public class MyViewController implements Observer, IView, Initializable {
         try {
             if (Configurations.getsearching() instanceof DepthFirstSearch) {
                 algo = "DepthFirstSearch";
-            } else if (Configurations.getsearching() instanceof BreadthFirstSearch) {
-                algo = "BreadthFirstSearch";
-            } else {
+            } else if (Configurations.getsearching() instanceof BestFirstSearch) {
                 algo = "BestFirstSearch";
+            } else {
+                algo = "BreadthFirstSearch";
             }
         } catch (IOException e) {
             e.printStackTrace();
