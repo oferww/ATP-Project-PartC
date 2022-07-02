@@ -32,6 +32,8 @@ public interface IModel {
 
     public void setMazefull(Maze mazefull) ;
 
+    public void exit();
+
 
 
     public void setMaze(int[][] maze) ;

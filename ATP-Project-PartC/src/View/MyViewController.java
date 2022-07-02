@@ -40,6 +40,7 @@ import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.stage.*;
+import javafx.util.Duration;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -72,6 +73,8 @@ public class MyViewController implements Observer, IView, Initializable {
     Media mediamusic = new Media(new File(musicFile).toURI().toString()); //replace /Movies/test.mp3 with your file
     MediaPlayer playermusic = new MediaPlayer(mediamusic);
 
+
+
     boolean presssol = false;
     boolean pressgen = false;
     boolean started = false;
@@ -85,7 +88,12 @@ public class MyViewController implements Observer, IView, Initializable {
         lbl_player_row.textProperty().bind(update_player_position_row);
         lbl_player_column.textProperty().bind(update_player_position_col);
 
-
+        playermusic.setOnEndOfMedia(new Runnable() {
+            public void run() {
+                playermusic.seek(Duration.ZERO);
+                playermusic.play();
+            }
+        });
     }
 
     public void setViewModel(MyViewModel viewModel) {
@@ -123,9 +131,10 @@ public class MyViewController implements Observer, IView, Initializable {
         int rows = 10;
         int cols = 10;
         try {
-            if (Integer.parseInt(textField_mazeRows.getText()) > 0)
+            if (Integer.parseInt(textField_mazeRows.getText()) > 0 && Integer.parseInt(textField_mazeColumns.getText()) > 0)
             {
                 rows = Integer.parseInt(textField_mazeRows.getText());
+                cols = Integer.parseInt(textField_mazeColumns.getText());
             }
             else
             {
@@ -133,10 +142,6 @@ public class MyViewController implements Observer, IView, Initializable {
                 viewModel.solveMaze(this.maze);
                 started = true;
                 return;
-            }
-            if (Integer.parseInt(textField_mazeColumns.getText()) > 0)
-            {
-                cols = Integer.parseInt(textField_mazeColumns.getText());
             }
         }
         catch (Exception ignored)
@@ -154,9 +159,10 @@ public class MyViewController implements Observer, IView, Initializable {
         int rows = 10;
         int cols = 10;
         try {
-            if (Integer.parseInt(textField_mazeRows.getText()) > 0)
+            if (Integer.parseInt(textField_mazeRows.getText()) > 0 && Integer.parseInt(textField_mazeColumns.getText()) > 0)
             {
                 rows = Integer.parseInt(textField_mazeRows.getText());
+                cols = Integer.parseInt(textField_mazeColumns.getText());
             }
             else
             {
@@ -165,10 +171,7 @@ public class MyViewController implements Observer, IView, Initializable {
                 viewModel.solveMaze(this.maze);
                 return;
             }
-            if (Integer.parseInt(textField_mazeColumns.getText()) > 0)
-            {
-                cols = Integer.parseInt(textField_mazeColumns.getText());
-            }        }
+        }
         catch (Exception ignored)
         {
         }

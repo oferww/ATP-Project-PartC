@@ -194,7 +194,7 @@ public class MyViewController implements Observer, IView, Initializable {
     }
 
 
-    public void showAlert(String message)
+    public void showendofgoal(String message)
     {
         Stage popupwindow=new Stage();
         popupwindow.initModality(Modality.APPLICATION_MODAL);
@@ -213,6 +213,13 @@ public class MyViewController implements Observer, IView, Initializable {
         popupwindow.setTitle("YOU ARE THE CHAMPION");
         popupwindow.getIcons().add(new Image("leo.png"));
         popupwindow.show();
+    }
+
+    public void showAlert(String message)
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setContentText(message);;
+        alert.show();
     }
 
     public void keyPressed(KeyEvent keyEvent) {
@@ -374,7 +381,7 @@ public class MyViewController implements Observer, IView, Initializable {
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent windowEvent) {
                 player.stop();
-                showAlert("You win!!! Amazing goal!!!");
+                showendofgoal("You win!!! Amazing goal!!!");
        }
    }
         );
@@ -446,10 +453,19 @@ public class MyViewController implements Observer, IView, Initializable {
         stage.getIcons().add(new Image("leo.png"));
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
+        ObjectInputStream oi = null;
         File selectedFile = fileChooser.showOpenDialog(stage);
+
         if (selectedFile != null) {
             FileInputStream fi = new FileInputStream(new File(selectedFile.getAbsolutePath()));
-            ObjectInputStream oi = new ObjectInputStream(fi);
+            try{
+                oi = new ObjectInputStream(fi);
+            }
+            catch (Exception e)
+            {
+                showAlert("wrong file type, this is not a maze!");
+                return;
+            }
 
             presssol = false;
             mazefull = (Maze) oi.readObject();

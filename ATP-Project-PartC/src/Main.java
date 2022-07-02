@@ -50,14 +50,15 @@ public class Main extends Application {
         viewModel.addObserver(controller);
         controller.setResizeEvent(scene);
 
-        SetStageCloseEvent(primaryStage);
+        SetStageCloseEvent(primaryStage, model);
         primaryStage.show();
 
     }
 
-    private void SetStageCloseEvent(Stage primaryStage ) {
+    private void SetStageCloseEvent(Stage primaryStage, IModel m ) {
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent windowEvent) {
+                    m.exit();
                     Platform.exit();
                     System.exit(0);
                 }

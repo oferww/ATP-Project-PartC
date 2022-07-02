@@ -42,6 +42,8 @@ public class MyModel extends Observable implements IModel{
         mazeGeneratingServer.start();
         solveSearchProblemServer.start();
     }
+
+
     public void setMaze(int[][] maze) {
         this.maze = maze;
     }
@@ -249,5 +251,11 @@ public class MyModel extends Observable implements IModel{
     }
     public Maze getMazeFull() {
         return mazefull;
+    }
+
+    public void exit()
+    {
+        solveSearchProblemServer.stop();
+        mazeGeneratingServer.stop();
     }
 }
