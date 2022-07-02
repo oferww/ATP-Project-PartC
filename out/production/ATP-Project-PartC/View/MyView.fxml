@@ -86,7 +86,7 @@
     <center>
         <Pane BorderPane.alignment="CENTER">
             <children>
-                <MazeDisplayer fx:id="mazeDisplayer" height="700.0" imageFileNamePlayer="./resources/dribble.png" imageFileNameWall="./resources/ramos.png" imageFileNamealbiol="./resources/albiol.png" imageFileNameball="./resources/ball.png" imageFileNamecasillas="./resources/casillas.png" imageFileNamediarra="./resources/diarra.png" imageFileNamegoal="./resources/goal.png" imageFileNamemarcelo="./resources/marcelo.png" imageFileNametp="./resources/tp.png" onKeyPressed="#keyPressed" width="700.0" />
+                <MazeDisplayer fx:id="mazeDisplayer" height="700.0" onScroll="#zoom" imageFileNamePlayer="./resources/dribble.png" imageFileNameWall="./resources/ramos.png" imageFileNamealbiol="./resources/albiol.png" imageFileNameball="./resources/ball.png" imageFileNamecasillas="./resources/casillas.png" imageFileNamediarra="./resources/diarra.png" imageFileNamegoal="./resources/goal.png" imageFileNamemarcelo="./resources/marcelo.png" imageFileNametp="./resources/tp.png" onKeyPressed="#keyPressed" width="700.0" />
             </children>
             <padding>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

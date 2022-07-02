@@ -13,6 +13,8 @@ import algorithms.search.Solution;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -29,6 +31,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
@@ -37,6 +40,7 @@ import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.stage.*;
+import javafx.util.Duration;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -65,6 +69,10 @@ public class MyViewController implements Observer, IView, Initializable {
     StringProperty update_player_position_col = new SimpleStringProperty();
     private int [][] maze;
     private Maze mazefull;
+    String musicFile = "resources/UCL.mp3";
+    Media mediamusic = new Media(new File(musicFile).toURI().toString()); //replace /Movies/test.mp3 with your file
+    MediaPlayer playermusic = new MediaPlayer(mediamusic);
+
 
 
     boolean presssol = false;
@@ -80,7 +88,12 @@ public class MyViewController implements Observer, IView, Initializable {
         lbl_player_row.textProperty().bind(update_player_position_row);
         lbl_player_column.textProperty().bind(update_player_position_col);
 
-
+        playermusic.setOnEndOfMedia(new Runnable() {
+            public void run() {
+                playermusic.seek(Duration.ZERO);
+                playermusic.play();
+            }
+        });
     }
 
     public void setViewModel(MyViewModel viewModel) {
@@ -110,25 +123,58 @@ public class MyViewController implements Observer, IView, Initializable {
             generatenewMaze();
             return;
         }
-        String musicFile = "resources/UCL.mp3";
-        Media media = new Media(new File(musicFile).toURI().toString()); //replace /Movies/test.mp3 with your file
-        MediaPlayer player = new MediaPlayer(media);
-        player.play();
+
+        playermusic.play();
 
         pressgen = !pressgen;
         presssol =false;
-        int rows = Integer.valueOf(textField_mazeRows.getText());
-        int cols = Integer.valueOf(textField_mazeColumns.getText());
+        int rows = 10;
+        int cols = 10;
+        try {
+            if (Integer.parseInt(textField_mazeRows.getText()) > 0 && Integer.parseInt(textField_mazeColumns.getText()) > 0)
+            {
+                rows = Integer.parseInt(textField_mazeRows.getText());
+                cols = Integer.parseInt(textField_mazeColumns.getText());
+            }
+            else
+            {
+                viewModel.generateMaze(rows,cols);
+                viewModel.solveMaze(this.maze);
+                started = true;
+                return;
+            }
+        }
+        catch (Exception ignored)
+        {
+        }
         viewModel.generateMaze(rows,cols);
         viewModel.solveMaze(this.maze);
         started = true;
+
 
     }
 
     public void generatenewMaze()
     {
-        int rows = Integer.valueOf(textField_mazeRows.getText());
-        int cols = Integer.valueOf(textField_mazeColumns.getText());
+        int rows = 10;
+        int cols = 10;
+        try {
+            if (Integer.parseInt(textField_mazeRows.getText()) > 0 && Integer.parseInt(textField_mazeColumns.getText()) > 0)
+            {
+                rows = Integer.parseInt(textField_mazeRows.getText());
+                cols = Integer.parseInt(textField_mazeColumns.getText());
+            }
+            else
+            {
+                presssol =false;
+                viewModel.generatenewMaze(rows,cols);
+                viewModel.solveMaze(this.maze);
+                return;
+            }
+        }
+        catch (Exception ignored)
+        {
+        }
         presssol =false;
         viewModel.generatenewMaze(rows,cols);
         viewModel.solveMaze(this.maze);
@@ -272,7 +318,7 @@ public class MyViewController implements Observer, IView, Initializable {
 
     private void playgoal()
     {
-        String video = "resources/gols.mp4";
+        String video = "resources/golss.mp4";
         Media gol = new Media(new File(video).toURI().toString()); //replace /Movies/test.mp3 with your file
         MediaPlayer playerg = new MediaPlayer(gol);
         playerg.setAutoPlay(true);
@@ -340,34 +386,39 @@ public class MyViewController implements Observer, IView, Initializable {
     }
 
     public void Help(ActionEvent actionEvent) throws IOException {
-
+        Group root = new Group();
+        double h = 200;
+        double w =200;
         Stage popupwindow=new Stage();
         popupwindow.initModality(Modality.APPLICATION_MODAL);
         popupwindow.setTitle("Help");
-        Label label1= new Label("It is the Champions League semi-final, the 87th minute\nYou need to try and get to the goal and score an amazing goal!!");
+        Label label1= new Label("It is the Champions League semi-final, the 87th minute\nYou need to try and get to the goal and score an amazing goal!!" +
+                "\nIf you don't enter a valid integer in rows/cols, the default of 10*10 maze is generated");
         VBox layout= new VBox(10);
-        popupwindow.getIcons().add(new Image("leo.png"));
-
+        label1.setTextFill(Color.YELLOW);
         layout.getChildren().addAll(label1);
         layout.setAlignment(Pos.CENTER);
-        Scene scene1= new Scene(layout, 400, 400);
-        popupwindow.setScene(scene1);
-        popupwindow.show();
-
-    }
-
-    public void About(ActionEvent actionEvent) throws IOException {
-        Stage popupwindow=new Stage();
-        popupwindow.initModality(Modality.APPLICATION_MODAL);
-        popupwindow.setTitle("About");
-        checkproperties();
+        label1.setStyle("-fx-font-weight: bold");
         popupwindow.getIcons().add(new Image("leo.png"));
-        Label label1= new Label("Maze Project created by Ofer and Erez\n" + "The searcing alogrithm used is " + algo +"\nThe maze generator used is " + gen );
-        VBox layout= new VBox(10);
-        layout.getChildren().addAll(label1);
-        layout.setAlignment(Pos.CENTER);
-        Scene scene1= new Scene(layout, 400, 200);
+        popupwindow.setResizable(false);
+        try {
+            Image image2 = new Image(new FileInputStream("resources/2.png"));
+            ImageView iv2 = new ImageView();
+            iv2.setImage(image2);
+            root.getChildren().add(iv2);
+            h = image2.getHeight();
+            w = image2.getWidth();
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        root.getChildren().add(layout);
+        layout.setPrefHeight(h/6);
+        layout.setPrefWidth(w*1.4);
+        Scene scene1= new Scene(root, w, h);
         popupwindow.setScene(scene1);
+
         popupwindow.show();
 
     }
@@ -445,6 +496,42 @@ public class MyViewController implements Observer, IView, Initializable {
 
     }
 
+    public void About(ActionEvent actionEvent) throws IOException {
+        Group root = new Group();
+        double h = 200;
+        double w =200;
+        Stage popupwindow=new Stage();
+        popupwindow.initModality(Modality.APPLICATION_MODAL);
+        popupwindow.setTitle("About");
+        popupwindow.getIcons().add(new Image("leo.png"));
+        Label label1= new Label("Maze Project created by Ofer and Erez\nWe used Iterative Backtracking to generate the maze.\n" +
+                "We used BFS, DFS, and BestFS to search for maze solutions.");
+        label1.setTextFill(Color.ROYALBLUE);
+        VBox layout= new VBox(100);
+        layout.getChildren().addAll(label1);
+        layout.setAlignment(Pos.CENTER);
+        label1.setStyle("-fx-font-weight: bold");
+        popupwindow.setResizable(false);
+        try {
+            Image image2 = new Image(new FileInputStream("resources/3.png"));
+            ImageView iv2 = new ImageView();
+            iv2.setImage(image2);
+            root.getChildren().add(iv2);
+            h = image2.getHeight();
+            w = image2.getWidth();
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        root.getChildren().add(layout);
+        layout.setPrefHeight(h/6);
+        layout.setPrefWidth(w);
+        Scene scene1= new Scene(root, w, h);
+        popupwindow.setScene(scene1);
+
+        popupwindow.show();
+    }
+
     public void properties() {
         Group root = new Group();
         double h = 200;
@@ -456,9 +543,11 @@ public class MyViewController implements Observer, IView, Initializable {
         checkproperties();
         popupwindow.getIcons().add(new Image("leo.png"));
         Label label1= new Label("The searcing alogrithm used is " + algo +"\nThe maze generator used is " + gen +"\nThe number of threads used is " + threads);
-        label1.setTextFill(Color.RED);
+        label1.setTextFill(Color.BLUEVIOLET);
         VBox layout= new VBox(100);
         layout.setAlignment(Pos.BOTTOM_CENTER);
+        label1.setStyle("-fx-font-weight: bold");
+
         layout.getChildren().addAll(label1);
         popupwindow.setResizable(false);
         try {
@@ -475,11 +564,12 @@ public class MyViewController implements Observer, IView, Initializable {
         root.getChildren().add(layout);
         layout.setPrefHeight(h/8);
         layout.setPrefWidth(1.6*w);
-        Scene scene1= new Scene(root, w, h);
+        Scene scene1= new Scene(root, w, h-50);
         popupwindow.setScene(scene1);
 
         popupwindow.show();
     }
+
 
     public void checkproperties() {
 
@@ -509,5 +599,20 @@ public class MyViewController implements Observer, IView, Initializable {
 
     }
 
+    public void setResizeEvent(Scene scene) {
+        scene.widthProperty().addListener((observableValue, oldSceneWidth, newSceneWidth) -> {
+            mazeDisplayer.setWidth((Double) newSceneWidth -200);
+            mazeDisplayer.draw();
+        });
+
+        scene.heightProperty().addListener((observableValue, oldSceneHeight, newSceneHeight) -> {
+            mazeDisplayer.setHeight((Double) newSceneHeight -100);
+            mazeDisplayer.draw();
+        });
+    }
+
+    public void zoom(ScrollEvent scrollEvent) {
+        mazeDisplayer.zoom(scrollEvent);
+    }
 
 }
